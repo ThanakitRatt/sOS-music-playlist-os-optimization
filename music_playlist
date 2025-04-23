@@ -1,0 +1,67 @@
+import threading
+import time
+import random
+import psutil
+import os
+
+# Cache and memory simulation
+cache = set()
+memory = []
+
+MAX_CACHE = 3
+
+# Threaded audio playback
+def play_song(song):
+    stream_audio(song)
+    load_to_memory(song)
+
+# Visualization
+def render_visualization(song):
+    time.sleep(1.5)
+
+# I/O Streaming
+def stream_audio(song):
+    if song in cache:
+        print(f"[Cache] Fast load: '{song}'")
+    else:
+        print(f"[Disk] Streaming '{song}' from disk")
+        if len(cache) >= MAX_CACHE:
+            removed = cache.pop()
+            print(f"[Cache] Removed '{removed}' to free space")
+        cache.add(song)
+
+# Memory management
+def load_to_memory(song):
+    if song not in memory:
+        memory.append(song)
+        print(f"[Memory] '{song}' loaded to RAM (now {len(memory)} items)")
+    else:
+        print(f"[Memory] '{song}' already in RAM")
+
+# Full process: play song and visualize
+def play_and_visualize(song):
+    t1 = threading.Thread(target=play_song, args=(song,))
+    t2 = threading.Thread(target=render_visualization, args=(song,))
+    t1.start()
+    t2.start()
+    t1.join()
+    t2.join()
+
+# Main Simulation 
+startt = time.time()
+if __name__ == "__main__":
+    print("=== OS Optimization Simulation with Real Resource Stats ===")
+    playlist = [
+        "Super Lady by (G)I-DLE", 
+        "Sugoi by LYKN", 
+        "Red by Taylor Swift", 
+        "OHM by Hiwwhee", 
+        "After Like by IVE"
+    ]
+    for song in playlist:
+        print("\nNow Playing:", song)
+        play_and_visualize(song)
+
+endt = time.time()
+
+print(f"\nTime: {endt - startt:.8f} sec")
